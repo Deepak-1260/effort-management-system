@@ -6,7 +6,7 @@ const LogEffort = () => {
   const [form, setForm] = useState({
     tmId: user || '', // Should come from session/auth in real app
     cohortCode: '',
-    mode:'',
+    mode:'Physical',
     reason: '',
     hours: '',
     date: '',
@@ -28,18 +28,19 @@ const LogEffort = () => {
   const requestBody = {
     info: {
       iD: form.tmId,  // Ensure correct casing if needed in backend
-      cohortCode: form.cohortCode
+      cohortCode: form.cohortCode,
+      date: form.date
     },
-    mode: form.mode === "Virtual" ? "Virtual" : form.mode, 
+    mode: form.mode, 
     reason: form.reason,
     effortHours: form.hours,
-    date: form.date,
     topic: form.topic,
     highlights: form.highlights
   };
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    console.log(form)
 
     fetch("http://localhost:8085/effortupdate",{
       method: 'POST',

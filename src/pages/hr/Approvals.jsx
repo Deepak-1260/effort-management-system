@@ -1,27 +1,44 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { Usercontext } from '../../App';
 
 const Approvals = () => {
+    const {user} = useContext(Usercontext);
+    
   const [efforts, setEfforts] = useState([])
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/efforts/pending') // your backend URL
-      .then(res => res.json())
-      .then(data => setEfforts(data))
+    console.log(user);
+    fetch(`http://localhost:8085/pendingApprovals/${user}`) // your backend URL
+    .then(res => res.json())
+    .then(data => {
+        console.log(data)
+        setEfforts(data)
+    })
+        
       .catch(err => {
         console.error('Failed to fetch efforts:', err)
         alert('Error fetching pending efforts.')
       })
   }, [])
 
-  const handleAction = async (effortId, action) => {
+  const handleAction = async (effort, action) => {
+    effort.status=action;
+    setEfforts(efforts.filter((eff)=>!(eff.info.id===effort.info.id &&
+        eff.info.date===effort.info.date &&
+        eff.info.cohortCode==effort.info.cohortCode)));
     try {
-      const res = await fetch(`http://localhost:5000/api/efforts/${effortId}/${action}`, {
-        method: 'POST',
-      })
-
-      if (!res.ok) throw new Error('Failed to update')
-
-      setEfforts(prev => prev.filter(e => e.id !== effortId)) // remove from list
+        const res = await fetch(`http://localhost:8085/updateStatus/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body:JSON.stringify(effort)
+        })
+        
+        if (!res.ok) throw new Error('Failed to update')
+        console.log(res)
+       
+    //   setEfforts(prev => prev.filter(e => e.id !== effort.info.id)) // remove from list
       alert(`Effort ${action}ed successfully`)
     } catch (err) {
       console.error(err)
@@ -39,29 +56,31 @@ const Approvals = () => {
             <div className="alert alert-info">No efforts pending approval.</div>
           ) : (
             efforts.map(effort => (
-              <div key={effort.id} className="card shadow-sm border-0 mb-4">
+              <div key={effort.info.cohortCode+effort.info.id+effort.info.date} className="card shadow-sm border-0 mb-4">
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <h6 className="mb-0 text-dark">
-                      {effort.trainerName} <span className="text-muted">({effort.trainerId})</span>
+                    {effort.info.iD}<span > ({effort.info.cohortCode})</span>
                     </h6>
-                    <span className="badge bg-secondary">{effort.date}</span>
+                    <span className="badge bg-secondary">{effort.info.date}</span>
                   </div>
-
+                  {/* <p className="mb-1"><strong>Cohort:</strong> {effort.info.cohortCode}</p>
+                  <p className="mb-1"><strong>TrainerId:</strong> {effort.info.id}</p>
+                  <p className="mb-1"><strong>Date:</strong> {effort.info.date}</p> */}
                   <p className="mb-1"><strong>Topic:</strong> {effort.topic}</p>
-                  <p className="mb-1"><strong>Hours:</strong> {effort.hours}</p>
+                  <p className="mb-1"><strong>Hours:</strong> {effort.effortHours}</p>
                   <p className="mb-2"><strong>Highlights:</strong> {effort.highlights}</p>
 
                   <div className="d-flex gap-3">
                     <button
                       className="btn btn-sm btn-outline-success"
-                      onClick={() => handleAction(effort.id, 'accept')}
+                      onClick={() => handleAction(effort, 'accept')}
                     >
                       ✅ Accept
                     </button>
                     <button
                       className="btn btn-sm btn-outline-danger"
-                      onClick={() => handleAction(effort.id, 'reject')}
+                      onClick={() => handleAction(effort, 'reject')}
                     >
                       ❌ Reject
                     </button>
