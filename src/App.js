@@ -62,7 +62,7 @@ function App() {
 
             <Route path="log-effort" element={<LogEffort />} />
             <Route path="update-info" element={<UpdateInfo />} />
-            <Route path="raise-query" element={<RaiseQuery />} />
+            {/* <Route path="raise-query" element={<RaiseQuery />} /> */}
             <Route path="reset-password" element={<ResetPassword/>}/>
           </Route>      
         <Route path="*" element={<Navigate to="/" />} />
