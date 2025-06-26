@@ -395,7 +395,7 @@ const UpdateInfo = () => {
           <form onSubmit={handleSubmit} className="row g-4">
             {/* Trainer ID */}
             <div className="col-md-6">
-              <label className="form-label" style={{ fontSize: '0.85rem' }}>Trainer ID <span className="text-danger">*</span></label>
+              <label className="form-label" style={{ fontSize: '0.85rem' }}>Trainer ID </label>
               <div className="input-group">
                 <span className="input-group-text"><i className="bi bi-person-badge"></i></span>
                 <input
@@ -404,7 +404,12 @@ const UpdateInfo = () => {
                   name="tmId"
                   value={form.tmId}
                   readOnly // Trainer ID should not be editable
-                  style={{ fontSize: '0.9rem' }}
+                  style={{
+                    fontSize: '0.9rem',
+                    backgroundColor: '#e9ecef' ,
+                    color:  '#6c757d',
+                    cursor:'not-allowed' 
+                  }}
                 />
               </div>
             </div>

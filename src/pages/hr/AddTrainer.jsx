@@ -459,8 +459,312 @@
 // export default AddTrainer;
 
  
+// import { useState } from 'react';
+// import Select from 'react-select';
+// import * as XLSX from 'xlsx';
+// import 'bootstrap-icons/font/bootstrap-icons.css';
+
+// const AddTrainer = () => {
+  
+//   const [form, setForm] = useState({
+//     tmId: '',
+//     name: '',
+//     email: '',
+//     phoneNo: '',
+//     gender: 'Male',
+//     experience: '',
+//     mappedTrainerType: '',
+//     role: 'Trainer',
+//     skills: [],
+//   });
+
+//   const [loading, setLoading] = useState(false);
+//   const [message, setMessage] = useState('');
+//   const [isSuccess, setIsSuccess] = useState(false);
+
+
+
+
+//   const handleFileUpload = async (e) => {
+//     const file = e.target.files[0];
+//     if (!file) return;
+  
+//     const reader = new FileReader();
+//     reader.onload = async (evt) => {
+//       const bstr = evt.target.result;
+//       const wb = XLSX.read(bstr, { type: 'binary' });
+//       const sheetName = wb.SheetNames[0];
+//       const sheet = wb.Sheets[sheetName];
+//       const data = XLSX.utils.sheet_to_json(sheet);
+  
+//       // You may transform column names here if they differ
+//       const payload = data.map(row => ({
+//         id: row.id,
+//         name: row.name,
+//         email: row.email,
+//         phoneNumber: row.phoneNumber,
+//         gender: row.gender,
+//         experience: parseInt(row.experience, 10),
+//         mappedType: row.mappedType,
+//         role: row.role,
+//         skills: row.skills ? row.skills.split(',').map(s => s.trim()) : []
+//       }));
+//       console.log(payload)
+//       try {
+//         const res = await fetch('http://localhost:8081/bulkAddTrainers', {
+//           method: 'POST',
+//           headers: { 'Content-Type': 'application/json' },
+//           body: JSON.stringify(payload)
+//         });
+  
+//         const result = await res.text();
+//         console.log(result)
+//         alert(result);
+//       } catch (err) {
+//         console.error('Bulk upload failed:', err);
+//         alert('Failed to upload trainers');
+//       }
+//     };
+//     reader.readAsBinaryString(file);
+//   };
+
+
+
+
+
+//   const skillOptions = [
+//     { value: 'JavaScript', label: 'JavaScript' },
+//     { value: 'React', label: 'React' },
+//     { value: 'Node.js', label: 'Node.js' },
+//     { value: 'Python', label: 'Python' },
+//     { value: 'Java', label: 'Java' },
+//   ];
+
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     setForm(prev => ({ ...prev, [name]: value }));
+//   };
+
+//   const handleSkillsChange = (selectedOptions) => {
+//     setForm(prev => ({
+//       ...prev,
+//       skills: selectedOptions.map(option => option.value),
+//     }));
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setLoading(true);
+
+//     const payload = {
+//       id: form.tmId,
+//       name: form.name,
+//       email: form.email,
+//       phoneNumber: form.phoneNo,
+//       gender: form.gender,
+//       experience: parseInt(form.experience, 10),
+//       mappedType: form.mappedTrainerType,
+//       role: form.role,
+//       skills: form.skills,
+//     };
+
+//     try {
+//       const response = await fetch('http://localhost:8081/addTrainer', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify(payload),
+//       });
+
+//       const result = await response.text();
+//       setMessage(`${result} to ${form.email}`);
+//       setIsSuccess(true);
+//       setForm({
+//         tmId: '',
+//         name: '',
+//         email: '',
+//         phoneNo: '',
+//         gender: '',
+//         experience: '',
+//         mappedTrainerType: '',
+//         role: 'Trainer',
+//         skills: [],
+//       });
+//       alert('Trainer added successfully!');
+//     } catch (error) {
+//       console.error('Fetch error:', error);
+//       setMessage(`Network error: ${error.message}`);
+//       setIsSuccess(false);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="card border-0 shadow-lg rounded-4">
+//       <div className="card-header bg-white border-bottom px-2 py-3 d-flex justify-content-between align-items-center">
+//         <h5 className="mb-0 text-primary">
+//           <i className="bi bi-person-plus-fill me-2"></i>Add New Trainer
+//         </h5>
+//         <span className="badge bg-secondary-subtle text-dark">HR Admin</span>
+//       </div>
+      
+
+//       <div className="card-body px-4 py-5">
+//         {message && (
+//           <div className={`p-3 rounded text-sm mb-4 ${isSuccess ? 'bg-success-subtle text-success-emphasis' : 'bg-danger-subtle text-danger-emphasis'}`}>
+//             {message}
+//           </div>
+//         )}
+
+//         <div className="mb-4">
+//           <input
+//             type="file"
+//             accept=".xlsx, .xls"
+//             onChange={handleFileUpload}
+//             className="form-control"
+//           />
+//         </div>
+
+//         <form onSubmit={handleFileUpload} className="row g-4">
+//           {[
+//             { label: 'Trainer ID', name: 'tmId', icon: 'person-badge-fill' },
+//             { label: 'Full Name', name: 'name', icon: 'person-fill' },
+//             { label: 'Email', name: 'email', icon: 'envelope-fill', type: 'email' },
+//             { label: 'Phone Number', name: 'phoneNo', icon: 'telephone-fill', type: 'tel' },
+//             // { label: 'Gender', name: 'gender', icon: 'gender-ambiguous' },
+//             { label: 'Experience (Years)', name: 'experience', icon: 'bar-chart-fill', type: 'number' },
+//           ].map(({ label, name, icon, type = 'text' }) => (
+//             <div className="col-md-4" key={name}>
+//               <label className="form-label" style={{ fontSize: '0.85rem' }}>{label}</label>
+//               <div className="input-group">
+//                 <span className="input-group-text"><i className={`bi bi-${icon}`}></i></span>
+//                 <input
+//                   type={type}
+//                   name={name}
+//                   className={`form-control form-control-lg ${form[name].trim() === '' && (name === 'tmId' || name === 'email') ? 'is-invalid' : ''}`}
+//                   value={form[name]}
+//                   onChange={handleChange}
+//                   placeholder={label}
+//                   style={{ fontSize: '0.9rem' }}
+//                   required
+//                 />
+//               </div>
+//             </div>
+//           ))}
+
+//           {/* Gender Radio button */}
+//           <div className="col-md-4">
+//             <label className="form-label" style={{ fontSize: '0.85rem' }}>Gender</label>
+//             <div className="d-flex align-items-center gap-4 ps-2">
+//               <div className="form-check">
+//                 <input
+//                   className="form-check-input"
+//                   type="radio"
+//                   name="gender"
+//                   id="genderMale"
+//                   value="Male"
+//                   checked={form.gender === 'Male'}
+//                   onChange={handleChange}
+//                   required
+//                 />
+//                 <label className="form-check-label" htmlFor="genderMale">
+//                   Male
+//                 </label>
+//               </div>
+//               <div className="form-check">
+//                 <input
+//                   className="form-check-input"
+//                   type="radio"
+//                   name="gender"
+//                   id="genderFemale"
+//                   value="Female"
+//                   checked={form.gender === 'Female'}
+//                   onChange={handleChange}
+//                   required
+//                 />
+//                 <label className="form-check-label" htmlFor="genderFemale">
+//                   Female
+//                 </label>
+//               </div>
+//             </div>
+//           </div>
+//           {/* Mapped Trainer Type Dropdown */}
+//           <div className="col-md-4">
+//             <label className="form-label" style={{ fontSize: '0.85rem' }}>Mapped Trainer Type</label>
+//             <div className="input-group">
+//               <span className="input-group-text"><i className="bi bi-person-check-fill"></i></span>
+//               <select
+//                 name="mappedTrainerType"
+//                 className="form-select form-select-lg"
+//                 value={form.mappedTrainerType}
+//                 onChange={handleChange}
+//                 required
+//                 style={{ fontSize: '0.9rem' }}
+//               >
+//                 <option value="">Select</option>
+//                 <option value="Internal">Internal</option>
+//                 <option value="External">External</option>
+//               </select>
+//             </div>
+//           </div>
+
+//           {/* Role Dropdown */}
+//           <div className="col-md-4">
+//             <label className="form-label" style={{ fontSize: '0.85rem' }}>Role</label>
+//             <div className="input-group">
+//               <span className="input-group-text"><i className="bi bi-award-fill"></i></span>
+//               <select
+//                 name="role"
+//                 className="form-select form-select-lg"
+//                 value={form.role}
+//                 onChange={handleChange}
+//                 required
+//                 style={{ fontSize: '0.9rem' }}
+//               >
+//                 <option value="Trainer">Trainer</option>
+//                 <option value="Mentor">Mentor</option>
+//                 <option value="Buddy Mentor">Buddy Mentor</option>
+//               </select>
+//             </div>
+//           </div>
+
+
+//           {/* Skills */}
+//           <div className="col-md-4">
+//             <label className="form-label" style={{ fontSize: '0.85rem' }}>Skills</label>
+//             <Select
+//               isMulti
+//               name="skills"
+//               options={skillOptions}
+//               className="basic-multi-select"
+//               classNamePrefix="select"
+//               onChange={handleSkillsChange}
+//               value={skillOptions.filter(option => form.skills.includes(option.value))}
+//               placeholder="Select skills"
+//               styles={{ placeholder: base => ({ ...base, fontSize: '0.9rem' }) }}
+//             />
+//           </div>
+
+//           <div className="col-12 mt-4 d-flex justify-content-center">
+//             <button
+//               type="submit"
+//               className="btn btn-success btn-ms w-25 shadow"
+//               disabled={loading}
+//             >
+//               <i className="bi bi-person-plus-fill me-2"></i>Add Trainer
+//             </button>
+//           </div>
+//         </form>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default AddTrainer;
+ 
 import { useState } from 'react';
 import Select from 'react-select';
+import * as XLSX from 'xlsx';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const AddTrainer = () => {
@@ -469,7 +773,7 @@ const AddTrainer = () => {
     name: '',
     email: '',
     phoneNo: '',
-    gender: '',
+    gender: 'Male',
     experience: '',
     mappedTrainerType: '',
     role: 'Trainer',
@@ -479,6 +783,49 @@ const AddTrainer = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
+  const [uploadMode, setUploadMode] = useState('single'); // 'single' or 'bulk'
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (evt) => {
+      const bstr = evt.target.result;
+      const wb = XLSX.read(bstr, { type: 'binary' });
+      const sheetName = wb.SheetNames[0];
+      const sheet = wb.Sheets[sheetName];
+      const data = XLSX.utils.sheet_to_json(sheet);
+
+      const payload = data.map(row => ({
+        id: row.id,
+        name: row.name,
+        email: row.email,
+        phoneNumber: row.phoneNumber,
+        gender: row.gender,
+        experience: parseInt(row.experience, 10),
+        mappedType: row.mappedType,
+        role: row.role,
+        skills: row.skills ? row.skills.split(',').map(s => s.trim()) : []
+      }));
+      console.log(payload);
+      try {
+        const res = await fetch('http://localhost:8081/bulkAddTrainers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await res.text();
+        console.log(result);
+        alert(result);
+      } catch (err) {
+        console.error('Bulk upload failed:', err);
+        alert('Failed to upload trainers');
+      }
+    };
+    reader.readAsBinaryString(file);
+  };
 
   const skillOptions = [
     { value: 'JavaScript', label: 'JavaScript' },
@@ -531,10 +878,10 @@ const AddTrainer = () => {
         name: '',
         email: '',
         phoneNo: '',
-        gender: '',
+        gender: 'Male', // Reset to default
         experience: '',
         mappedTrainerType: '',
-        role: 'Trainer',
+        role: 'Trainer', // Reset to default
         skills: [],
       });
       alert('Trainer added successfully!');
@@ -562,140 +909,168 @@ const AddTrainer = () => {
             {message}
           </div>
         )}
-        <form onSubmit={handleSubmit} className="row g-4">
-          {[
-            { label: 'Trainer ID', name: 'tmId', icon: 'person-badge-fill' },
-            { label: 'Full Name', name: 'name', icon: 'person-fill' },
-            { label: 'Email', name: 'email', icon: 'envelope-fill', type: 'email' },
-            { label: 'Phone Number', name: 'phoneNo', icon: 'telephone-fill', type: 'tel' },
-            // { label: 'Gender', name: 'gender', icon: 'gender-ambiguous' },
-            { label: 'Experience (Years)', name: 'experience', icon: 'bar-chart-fill', type: 'number' },
-          ].map(({ label, name, icon, type = 'text' }) => (
-            <div className="col-md-4" key={name}>
-              <label className="form-label" style={{ fontSize: '0.85rem' }}>{label}</label>
-              <div className="input-group">
-                <span className="input-group-text"><i className={`bi bi-${icon}`}></i></span>
-                <input
-                  type={type}
-                  name={name}
-                  className="form-control form-control-lg"
-                  value={form[name]}
-                  onChange={handleChange}
-                  placeholder={label}
-                  style={{ fontSize: '0.9rem' }}
-                  required
-                />
-              </div>
-            </div>
-          ))}
 
-          {/* Gender Radio button */}
-          <div className="col-md-4">
-            <label className="form-label" style={{ fontSize: '0.85rem' }}>Gender</label>
-            <div className="d-flex align-items-center gap-4 ps-2">
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="gender"
-                  id="genderMale"
-                  value="Male"
-                  checked={form.gender === 'Male'}
-                  onChange={handleChange}
-                  required
-                />
-                <label className="form-check-label" htmlFor="genderMale">
-                  Male
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="gender"
-                  id="genderFemale"
-                  value="Female"
-                  checked={form.gender === 'Female'}
-                  onChange={handleChange}
-                  required
-                />
-                <label className="form-check-label" htmlFor="genderFemale">
-                  Female
-                </label>
-              </div>
-            </div>
-          </div>
-          {/* Mapped Trainer Type Dropdown */}
-          <div className="col-md-4">
-            <label className="form-label" style={{ fontSize: '0.85rem' }}>Mapped Trainer Type</label>
-            <div className="input-group">
-              <span className="input-group-text"><i className="bi bi-person-check-fill"></i></span>
-              <select
-                name="mappedTrainerType"
-                className="form-select form-select-lg"
-                value={form.mappedTrainerType}
-                onChange={handleChange}
-                required
-                style={{ fontSize: '0.9rem' }}
-              >
-                <option value="">Select</option>
-                <option value="Internal">Internal</option>
-                <option value="External">External</option>
-              </select>
-            </div>
-          </div>
+        <div className="d-flex justify-content-center mb-4 gap-3">
+          <button
+            className={`btn ${uploadMode === 'single' ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={() => setUploadMode('single')}
+          >
+            <i className="bi bi-person-fill me-2"></i>Single Trainer Upload
+          </button>
+          <button
+            className={`btn ${uploadMode === 'bulk' ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={() => setUploadMode('bulk')}
+          >
+            <i className="bi bi-upload me-2"></i>Bulk Upload
+          </button>
+        </div>
 
-          {/* Role Dropdown */}
-          <div className="col-md-4">
-            <label className="form-label" style={{ fontSize: '0.85rem' }}>Role</label>
-            <div className="input-group">
-              <span className="input-group-text"><i className="bi bi-award-fill"></i></span>
-              <select
-                name="role"
-                className="form-select form-select-lg"
-                value={form.role}
-                onChange={handleChange}
-                required
-                style={{ fontSize: '0.9rem' }}
-              >
-                <option value="Trainer">Trainer</option>
-                <option value="Mentor">Mentor</option>
-                <option value="Buddy Mentor">Buddy Mentor</option>
-              </select>
-            </div>
-          </div>
-
-
-          {/* Skills */}
-          <div className="col-md-4">
-            <label className="form-label" style={{ fontSize: '0.85rem' }}>Skills</label>
-            <Select
-              isMulti
-              name="skills"
-              options={skillOptions}
-              className="basic-multi-select"
-              classNamePrefix="select"
-              onChange={handleSkillsChange}
-              value={skillOptions.filter(option => form.skills.includes(option.value))}
-              placeholder="Select skills"
-              styles={{ placeholder: base => ({ ...base, fontSize: '0.9rem' }) }}
+        {uploadMode === 'bulk' && (
+          <div className="mb-4">
+            <label htmlFor="bulkUploadFile" className="form-label" style={{ fontSize: '0.85rem' }}>Upload Excel File</label>
+            <input
+              id="bulkUploadFile"
+              type="file"
+              accept=".xlsx, .xls"
+              onChange={handleFileUpload}
+              className="form-control"
             />
           </div>
+        )}
 
-          <div className="col-12 mt-4 d-flex justify-content-center">
-            <button
-              type="submit"
-              className="btn btn-success btn-ms w-25 shadow"
-              disabled={loading}
-            >
-              <i className="bi bi-person-plus-fill me-2"></i>Add Trainer
-            </button>
-          </div>
-        </form>
+        {uploadMode === 'single' && (
+          <form onSubmit={handleSubmit} className="row g-4">
+            {[
+              { label: 'Trainer ID', name: 'tmId', icon: 'person-badge-fill' },
+              { label: 'Full Name', name: 'name', icon: 'person-fill' },
+              { label: 'Email', name: 'email', icon: 'envelope-fill', type: 'email' },
+              { label: 'Phone Number', name: 'phoneNo', icon: 'telephone-fill', type: 'tel' },
+              { label: 'Experience (Years)', name: 'experience', icon: 'bar-chart-fill', type: 'number' },
+            ].map(({ label, name, icon, type = 'text' }) => (
+              <div className="col-md-4" key={name}>
+                <label className="form-label" style={{ fontSize: '0.85rem' }}>{label}</label>
+                <div className="input-group">
+                  <span className="input-group-text"><i className={`bi bi-${icon}`}></i></span>
+                  <input
+                    type={type}
+                    name={name}
+                    className={`form-control form-control-lg ${form[name].trim() === '' && (name === 'tmId' || name === 'email') ? 'is-invalid' : ''}`}
+                    value={form[name]}
+                    onChange={handleChange}
+                    placeholder={label}
+                    style={{ fontSize: '0.9rem' }}
+                    required
+                  />
+                </div>
+              </div>
+            ))}
+
+            {/* Gender Radio button */}
+            <div className="col-md-4">
+              <label className="form-label" style={{ fontSize: '0.85rem' }}>Gender</label>
+              <div className="d-flex align-items-center gap-4 ps-2">
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="gender"
+                    id="genderMale"
+                    value="Male"
+                    checked={form.gender === 'Male'}
+                    onChange={handleChange}
+                    required
+                  />
+                  <label className="form-check-label" htmlFor="genderMale">
+                    Male
+                  </label>
+                </div>
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="gender"
+                    id="genderFemale"
+                    value="Female"
+                    checked={form.gender === 'Female'}
+                    onChange={handleChange}
+                    required
+                  />
+                  <label className="form-check-label" htmlFor="genderFemale">
+                    Female
+                  </label>
+                </div>
+              </div>
+            </div>
+            {/* Mapped Trainer Type Dropdown */}
+            <div className="col-md-4">
+              <label className="form-label" style={{ fontSize: '0.85rem' }}>Mapped Trainer Type</label>
+              <div className="input-group">
+                <span className="input-group-text"><i className="bi bi-person-check-fill"></i></span>
+                <select
+                  name="mappedTrainerType"
+                  className="form-select form-select-lg"
+                  value={form.mappedTrainerType}
+                  onChange={handleChange}
+                  required
+                  style={{ fontSize: '0.9rem' }}
+                >
+                  <option value="">Select</option>
+                  <option value="Internal">Internal</option>
+                  <option value="External">External</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Role Dropdown */}
+            <div className="col-md-4">
+              <label className="form-label" style={{ fontSize: '0.85rem' }}>Role</label>
+              <div className="input-group">
+                <span className="input-group-text"><i className="bi bi-award-fill"></i></span>
+                <select
+                  name="role"
+                  className="form-select form-select-lg"
+                  value={form.role}
+                  onChange={handleChange}
+                  required
+                  style={{ fontSize: '0.9rem' }}
+                >
+                  <option value="Trainer">Trainer</option>
+                  <option value="Mentor">Mentor</option>
+                  <option value="Buddy Mentor">Buddy Mentor</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Skills */}
+            <div className="col-md-4">
+              <label className="form-label" style={{ fontSize: '0.85rem' }}>Skills</label>
+              <Select
+                isMulti
+                name="skills"
+                options={skillOptions}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                onChange={handleSkillsChange}
+                value={skillOptions.filter(option => form.skills.includes(option.value))}
+                placeholder="Select skills"
+                styles={{ placeholder: base => ({ ...base, fontSize: '0.9rem' }) }}
+              />
+            </div>
+
+            <div className="col-12 mt-4 d-flex justify-content-center">
+              <button
+                type="submit"
+                className="btn btn-success btn-ms w-25 shadow"
+                disabled={loading}
+              >
+                <i className="bi bi-person-plus-fill me-2"></i>Add Trainer
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );
 };
 
 export default AddTrainer;
- 

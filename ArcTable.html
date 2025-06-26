@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Microservices Architecture</title>
+  <!-- Mermaid.js for diagram rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true });
+  </script>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+    }
+    .mermaid {
+      background: #fafafa;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: .5rem;
+      text-align: left;
+    }
+    th {
+      background: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+  <h2>Trainer Management Microservices Architecture</h2>
+  <div class="mermaid">
+    graph LR
+      Client[Browser/UI] -->|REST calls| HRS[(HRSERVICE<br/>port:8081)]
+      Client -->|REST calls| TE[(TRAINEREFFORT<br/>port:8085)]
+      Client -->|REST calls| JWT[(JWT Auth Service<br/>port:8082)]
+
+      subgraph Registry
+        EUREKA[(Eureka Server<br/>port:8761)]
+      end
+
+      HRS -->|Feign → JWT: POST /validatehr| JWT
+      HRS -->|Feign → TRAINEREFFORT: 
+        GET /checkTrainer/{id}, 
+        GET /download| TE
+      TE -->|Feign → HRSERVICE: 
+        POST /validateCohort, 
+        POST /validateTrainer?id=&cid=, 
+        GET /getCohorts/{hrId}| HRS
+
+      HRS -.->|registers| EUREKA
+      TE -.->|registers| EUREKA
+      JWT -.->|registers| EUREKA
+
+      classDef svc fill:#E3F2FD,stroke:#90CAF9,stroke-width:1px;
+      class HRS,TE,JWT svc;
+      class EUREKA fill:#FFF3E0,stroke:#FFB74D,stroke-width:1px;
+  </div>
+
+  <h3>Service Endpoints & Ports</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Service</th>
+        <th>Port</th>
+        <th>HTTP Method</th>
+        <th>Path</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- HRSERVICE -->
+      <tr>
+        <td rowspan="7">HRSERVICE</td>
+        <td rowspan="7">8081</td>
+        <td>POST</td>
+        <td>/add-cohort</td>
+        <td>Create a new cohort</td>
+      </tr>
+      <tr><td>DELETE</td><td>/delete-cohort/{cohortCode}</td><td>Remove cohort by code</td></tr>
+      <tr><td>GET</td><td>/search-cohort/{cohortCode}</td><td>Retrieve cohort details</td></tr>
+      <tr><td>POST</td><td>/allocate</td><td>Allocate trainer to cohort</td></tr>
+      <tr><td>POST</td><td>/validateCohort</td><td>Check if cohort exists</td></tr>
+      <tr><td>GET</td><td>/getCohorts/{hrId}</td><td>List cohorts for an HR</td></tr>
+      <tr><td>POST</td><td>/validateTrainer?id=&lt;trainerId&gt;&amp;cid=&lt;cohortId&gt;</td><td>Check if trainer is allocated</td></tr>
+
+      <!-- TRAINEREFFORT -->
+      <tr>
+        <td rowspan="3">TRAINEREFFORT</td>
+        <td rowspan="3">8085</td>
+        <td>POST</td>
+        <td>/validateCohort</td>
+        <td>Validate cohort via HRSERVICE</td>
+      </tr>
+      <tr><td>POST</td><td>/validateTrainer?id=&lt;trainerId&gt;&amp;cid=&lt;cohortId&gt;</td><td>Validate trainer via HRSERVICE</td></tr>
+      <tr><td>GET</td><td>/getCohorts/{hrId}</td><td>Fetch cohorts for HR from HRSERVICE</td></tr>
+
+      <!-- JWT AUTH -->
+      <tr>
+        <td>JWT Auth Service</td>
+        <td>8082</td>
+        <td>POST</td>
+        <td>/validatehr</td>
+        <td>Validate HR token / identity</td>
+      </tr>
+
+      <!-- EUREKA -->
+      <tr>
+        <td>Eureka Server</td>
+        <td>8761</td>
+        <td>GET</td>
+        <td>/</td>
+        <td>Dashboard & service registry</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Feign-based Inter-service Calls</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Source Service</th>
+        <th>Target Service</th>
+        <th>HTTP Method</th>
+        <th>Path</th>
+        <th>Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>HRSERVICE</td>
+        <td>JWT Auth Service</td>
+        <td>POST</td>
+        <td>/validatehr</td>
+        <td>Validate HR credentials before cohort creation</td>
+      </tr>
+      <tr>
+        <td>HRSERVICE</td>
+        <td>TRAINEREFFORT</td>
+        <td>GET</td>
+        <td>/checkTrainer/{id}</td>
+        <td>Check if trainer exists before allocation</td>
+      </tr>
+      <tr>
+        <td>HRSERVICE</td>
+        <td>TRAINEREFFORT</td>
+        <td>GET</td>
+        <td>/download</td>
+        <td>Fetch combined trainer-effort data for Excel export</td>
+      </tr>
+      <tr>
+        <td>TRAINEREFFORT</td>
+        <td>HRSERVICE</td>
+        <td>POST</td>
+        <td>/validateCohort</td>
+        <td>Confirm cohort existence for effort logging</td>
+      </tr>
+      <tr>
+        <td>TRAINEREFFORT</td>
+        <td>HRSERVICE</td>
+        <td>POST</td>
+        <td>/validateTrainer?id=&lt;trainerId&gt;&amp;cid=&lt;cohortId&gt;</td>
+        <td>Verify trainer-cohort mapping</td>
+      </tr>
+      <tr>
+        <td>TRAINEREFFORT</td>
+        <td>HRSERVICE</td>
+        <td>GET</td>
+        <td>/getCohorts/{hrId}</td>
+        <td>Retrieve HR’s cohorts for dropdowns</td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>

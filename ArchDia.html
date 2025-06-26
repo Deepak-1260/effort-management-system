@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Microservices Architecture</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true });
+  </script>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    .mermaid { background: #fafafa; border: 1px solid #ddd; border-radius: 8px; padding: 1rem; }
+  </style>
+</head>
+<body>
+  <h2>Trainer Management Microservices Architecture</h2>
+  <div class="mermaid">
+graph LR
+  %% Clients
+  Client["Browser / UI"] -->|REST| HRS["HRSERVICE\n(port:8081)"]
+  Client -->|REST| TE["TRAINEREFFORT\n(port:8085)"]
+  Client -->|REST| JWT["JWT Auth Service\n(port:8082)"]
+
+  %% Registry
+  subgraph Eureka
+    EUREKA["Eureka Server\n(port:8761)"]
+  end
+
+  %% Feign calls from HRSERVICE
+  HRS -- "POST /validatehr" --> JWT
+  HRS -- "GET /checkTrainer/{id}" --> TE
+  HRS -- "GET /download" --> TE
+
+  %% Feign calls from TRAINEREFFORT
+  TE -- "POST /validateCohort" --> HRS
+  TE -- "POST /validateTrainer?id=&lt;trainerId&gt;&amp;cid=&lt;cohortId&gt;" --> HRS
+  TE -- "GET /getCohorts/{hrId}" --> HRS
+
+  %% Registrations
+  HRS -.->|registers| EUREKA
+  TE -.->|registers| EUREKA
+  JWT -.->|registers| EUREKA
+
+  %% Styling
+  classDef svc fill:#E3F2FD,stroke:#90CAF9,stroke-width:1px;
+  class HRS,TE,JWT svc;
+  class EUREKA fill:#FFF3E0,stroke:#FFB74D,stroke-width:1px;
+  </div>
+</body>
+</html>
+

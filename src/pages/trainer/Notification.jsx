@@ -72,6 +72,16 @@ const Notification = () => {
                   <p className="mb-1"><strong>Topic:</strong> {effort.topic}</p>
                   <p className="mb-1"><strong>Hours:</strong> {effort.effortHours}</p>
                   <p className="mb-2"><strong>Highlights:</strong> {effort.highlights}</p>
+                  {   
+                    effort.status === 'reject'?(
+                      
+                      <p className="mb-2"><strong>Remarks:</strong> {effort.remarks}</p>
+                      
+
+                    ):(
+                      <></>
+                    )
+                  }
 
                 </div>
               </div>
