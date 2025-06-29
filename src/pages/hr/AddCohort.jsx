@@ -218,6 +218,8 @@
 
 import { useState } from 'react';
 import * as XLSX from 'xlsx';
+import { utils, writeFile } from 'xlsx';
+
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const AddCohort = () => {
@@ -231,6 +233,25 @@ const AddCohort = () => {
     location: '',
     hr_id: ''
   });
+
+
+  const downloadSampleExcel = () => {
+    const sampleData = [
+      {
+        cohortCode: '',
+    bussinessType: '',
+    gencCount: '',
+    location: '',
+    hr_id: ''
+      }
+    ];
+  
+    const worksheet = utils.json_to_sheet(sampleData);
+    const workbook = utils.book_new();
+    utils.book_append_sheet(workbook, worksheet, 'Trainers');
+  
+    writeFile(workbook, 'Trainer_Sample_Format.xlsx');
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -336,6 +357,10 @@ const AddCohort = () => {
 
         {uploadMode === 'bulk' && (
           <div className="mb-4">
+            <button className="btn btn-outline-secondary mb-3" onClick={downloadSampleExcel}>
+              <i className="bi bi-download me-2"></i>Download Template
+            </button>
+            <br></br>
             <label htmlFor="bulkUploadFile" className="form-label" style={{ fontSize: '0.85rem' }}>Upload Excel File</label>
             <input
               id="bulkUploadFile"

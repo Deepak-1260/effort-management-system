@@ -378,6 +378,8 @@
 // export default AllocateTrainer;
 import { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx'; // Import XLSX for bulk upload
+import { utils, writeFile } from 'xlsx';
+
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const AllocateTrainer = () => {
@@ -391,30 +393,22 @@ const AllocateTrainer = () => {
     cohortCode: ''
   });
 
-  useEffect(() => {
-    const fetchAllocatedCohorts = async () => {
-      if (form.tmId.trim() && uploadMode === 'single') { // Only fetch for single mode
-        try {
-          console.log(form.tmId);
-          const res = await fetch(`http://localhost:8081/getAllocatedCohorts/${form.tmId}`);
-          if (res.ok) {
-            const data = await res.json();
-            console.log(data);
-            setAllocatedCohorts(data);
-          } else {
-            setAllocatedCohorts([]);
-          }
-        } catch (err) {
-          console.error('Failed to fetch cohorts:', err);
-          setAllocatedCohorts([]);
-        }
-      } else {
-        setAllocatedCohorts([]); // Clear if no tmId or in bulk mode
-      }
-    };
 
-    fetchAllocatedCohorts();
-  }, [form.tmId, uploadMode]); // Add uploadMode to dependency array
+const downloadSampleExcel = () => {
+  const sampleData = [
+    {
+      tmId: '',
+    areaOfWork: '',
+    cohortCode: ''
+    }
+  ];
+
+  const worksheet = utils.json_to_sheet(sampleData);
+  const workbook = utils.book_new();
+  utils.book_append_sheet(workbook, worksheet, 'Trainers');
+
+  writeFile(workbook, 'Trainer_Sample_Format.xlsx');
+};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -529,6 +523,10 @@ const AllocateTrainer = () => {
 
         {uploadMode === 'bulk' && (
           <div className="mb-4">
+            <button className="btn btn-outline-secondary mb-3" onClick={downloadSampleExcel}>
+              <i className="bi bi-download me-2"></i>Download Template
+            </button>
+            <br></br>  
             <label htmlFor="bulkUploadFile" className="form-label" style={{ fontSize: '0.85rem' }}>Upload Excel File for Bulk Allocation</label>
             <input
               id="bulkUploadFile"
@@ -577,25 +575,24 @@ const AllocateTrainer = () => {
               </div>
             </div>
 
-            <div className="col-md-4">
-              <label className="form-label" style={{ fontSize: '0.85rem' }}>Allocated Cohort Codes</label>
-              <div className="input-group">
-                <span className="input-group-text"><i className="bi bi-code-slash"></i></span>
-                <select
-                  name="cohortCode"
-                  className="form-select form-select-lg"
-                  value={form.cohortCode}
-                  onChange={handleChange}
-                  required
-                  style={{ fontSize: '0.9rem' }}
-                >
-                  <option value="">Select Cohort</option>
-                  {allocatedCohorts.map(code => (
-                    <option key={code} value={code}>{code}</option>
-                  ))}
-                </select>
-              </div>
+            
+
+<div className="col-md-4">
+            <label className="form-label" style={{ fontSize: '0.85rem' }}>Cohort Code</label>
+             <div className="input-group">
+              <span className="input-group-text"><i className="bi bi-code-slash"></i></span>
+               <input
+                type="text"
+                name="cohortCode"
+                className="form-control form-control-lg"
+                 value={form.cohortCode}
+                 onChange={handleChange}
+                required
+                style={{ fontSize: '0.9rem' }}
+                placeholder="Cohort Code"
+              />
             </div>
+          </div>
 
             <div className="col-12 mt-4 d-flex justify-content-center">
               <button type="submit" className="btn btn-success btn-ms w-25 shadow">
