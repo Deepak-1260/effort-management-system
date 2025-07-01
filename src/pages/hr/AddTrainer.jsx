@@ -16,7 +16,7 @@ const AddTrainer = () => {
     gender: 'Male',
     experience: '',
     mappedTrainerType: '',
-    role: '', // ← Set to empty string
+    role: '', 
     skills: [],
   });
   
@@ -75,7 +75,7 @@ const downloadSampleExcel = () => {
       }));
       console.log(payload);
       try {
-        const res = await fetch('http://localhost:8081/bulkAddTrainers', {
+        const res = await fetch('http://52.88.246.113:8081/bulkAddTrainers', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -146,7 +146,7 @@ const downloadSampleExcel = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:8081/addTrainer', {
+      const response = await fetch('http://52.88.246.113:8081/addTrainer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -160,10 +160,10 @@ const downloadSampleExcel = () => {
         name: '',
         email: '',
         phoneNo: '',
-        gender: 'Male', // Reset to default
+        gender: 'Male', 
         experience: '',
         mappedTrainerType: '',
-        role: '', // Reset to default
+        role: '', 
         skills: [],
       });
       alert('Trainer added successfully!');
@@ -226,133 +226,6 @@ const downloadSampleExcel = () => {
           
         )}
 
-        {/*{uploadMode === 'single' && (
-          <form onSubmit={handleSubmit} className="row g-4">
-            {[
-              { label: 'Trainer ID', name: 'tmId', icon: 'person-badge-fill',required: true  },
-              { label: 'Full Name', name: 'name', icon: 'person-fill' ,required: false },
-              { label: 'Email', name: 'email', icon: 'envelope-fill', type: 'email',required: true  },
-              { label: 'Phone Number', name: 'phoneNo', icon: 'telephone-fill', type: 'tel',required: false },
-              // { label: 'Experience (Years)', name: 'experience', icon: 'bar-chart-fill', type: 'number' },
-            ].map(({ label, name, icon, type = 'text' }) => (
-              <div className="col-md-4" key={name}>
-                <label className="form-label" style={{ fontSize: '0.85rem' }}>{label}</label>
-                <div className="input-group">
-                  <span className="input-group-text"><i className={`bi bi-${icon}`}></i></span>
-                  <input
-                    type={type}
-                    name={name}
-                    className={`form-control form-control-lg ${form[name].trim() === '' && (name === 'tmId' || name === 'email') ? 'is-invalid' : ''}`}
-                    value={form[name]}
-                    onChange={handleChange}
-                    placeholder={label}
-                    style={{ fontSize: '0.9rem' }}
-                  />
-                </div>
-              </div>
-            ))}
-
-            
-            <div className="col-md-4">
-              <label className="form-label" style={{ fontSize: '0.85rem' }}>Gender</label>
-              <div className="d-flex align-items-center gap-4 ps-2">
-                <div className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    name="gender"
-                    id="genderMale"
-                    value="Male"
-                    checked={form.gender === 'Male'}
-                    onChange={handleChange}
-                  />
-                  <label className="form-check-label" htmlFor="genderMale">
-                    Male
-                  </label>
-                </div>
-                <div className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    name="gender"
-                    id="genderFemale"
-                    value="Female"
-                    checked={form.gender === 'Female'}
-                    onChange={handleChange}
-                  />
-                  <label className="form-check-label" htmlFor="genderFemale">
-                    Female
-                  </label>
-                </div>
-              </div>
-            </div>
-            
-            
-            <div className="col-md-4">
-              <label className="form-label" style={{ fontSize: '0.85rem' }}>Mapped Trainer Type</label>
-              <div className="input-group">
-                <span className="input-group-text"><i className="bi bi-person-check-fill"></i></span>
-                <select
-                  name="mappedTrainerType"
-                  className="form-select form-select-lg"
-                  value={form.mappedTrainerType}
-                  onChange={handleChange}
-                  required
-                  style={{ fontSize: '0.9rem' }}
-                >
-                  <option value="">Select</option>
-                  <option value="Internal">Internal</option>
-                  <option value="External">External</option>
-                </select>
-              </div>
-            </div>
-
-              <div className="col-md-4">
-              <label className="form-label" style={{ fontSize: '0.85rem' }}>Skills</label>
-              <AsyncSelect
-                isMulti
-                cacheOptions
-                
-                loadOptions={loadSkillOptions}
-                onChange={handleSkillsChange}
-                value={form.skills.map(s => ({ label: s, value: s }))}
-                placeholder="Type to search skills"
-                styles={{ placeholder: base => ({ ...base, fontSize: '0.9rem' }) }}
-              />
-              </div>
-
-
-            
-            <div className="col-md-4">
-              <label className="form-label" style={{ fontSize: '0.85rem' }}>Role</label>
-              <div className="input-group">
-                <span className="input-group-text"><i className="bi bi-award-fill"></i></span>
-                <select
-                  name="role"
-                  className="form-select form-select-lg"
-                  value={form.role}
-                  onChange={handleChange}
-                  required
-                  style={{ fontSize: '0.9rem' }}
-                >
-                  <option value="Trainer">Trainer</option>
-                  <option value="Mentor">Mentor</option>
-                  <option value="Buddy Mentor">Buddy Mentor</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="col-12 mt-4 d-flex justify-content-center">
-              <button
-                type="submit"
-                className="btn btn-success btn-ms w-25 shadow"
-                disabled={loading}
-              >
-                <i className="bi bi-person-plus-fill me-2"></i>Add Trainer
-              </button>
-            </div>
-          </form>
-        )} */}
         {uploadMode === 'single' && (
         <form onSubmit={handleSubmit} className="row g-4">
           {[
