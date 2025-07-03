@@ -46,7 +46,7 @@ const DownloadData = () => {
     // Construct download URL
     const getDownloadUrl = () => {
 
-        const BASE_URL = 'http://localhost:8081'; // Using a base URL for cleaner routes
+        const BASE_URL = 'http://52.88.246.113:8081'; // Using a base URL for cleaner routes
         switch (filterType) {
             case 'hrId':
                 return `${BASE_URL}/download/${hrId}`;
