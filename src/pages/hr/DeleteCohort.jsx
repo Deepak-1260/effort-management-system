@@ -170,7 +170,7 @@ const DeleteCohort = () => {
     const fetchCohortDetails = async () => {
       if (cohortCode) {
         try {
-          const res = await fetch(`http://localhost:8081/search-cohort/${cohortCode}`);
+          const res = await fetch(`http://52.43.62.125:8081/search-cohort/${cohortCode}`);
           if (res.ok) {
             const data = await res.json();
             console.log(data)
@@ -195,7 +195,7 @@ const DeleteCohort = () => {
     if (!cohortCode.trim()) return alert('Cohort Code is required');
 
     try {
-      const response = await fetch(`http://localhost:8081/delete-cohort/${cohortCode}`, {
+      const response = await fetch(`http://52.43.62.125:8081/delete-cohort/${cohortCode}`, {
         method: 'DELETE'
       });
 

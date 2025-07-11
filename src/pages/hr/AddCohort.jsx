@@ -266,7 +266,7 @@ const AddCohort = () => {
       return;
     }
     try {
-      const response = await fetch('http://localhost:8081/add-cohort', {
+      const response = await fetch('http://52.43.62.125:8081/add-cohort', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -313,7 +313,7 @@ const AddCohort = () => {
       }));
 
       try {
-        const res = await fetch('http://localhost:8081/bulk-add-cohorts', { // Assuming a bulk add endpoint
+        const res = await fetch('http://52.43.62.125:8081/bulk-add-cohorts', { // Assuming a bulk add endpoint
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)

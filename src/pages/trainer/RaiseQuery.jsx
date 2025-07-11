@@ -26,7 +26,7 @@ const RaiseQuery = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    fetch("http://localhost:8086/raisequery",{
+    fetch("http://52.43.62.125:8086/raisequery",{
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

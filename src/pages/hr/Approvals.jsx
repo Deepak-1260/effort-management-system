@@ -105,7 +105,7 @@ const Approvals = () => {
   const [remarks, setRemarks] = useState('');
 
   useEffect(() => {
-    fetch(`http://localhost:8085/pendingApprovals/${user}`)
+    fetch(`http://52.43.62.125:8085/pendingApprovals/${user}`)
       .then(res => res.json())
       .then(data => {
         console.log(data)
@@ -137,7 +137,7 @@ const Approvals = () => {
     setRemarks('');
 
     try {
-      const res = await fetch(`http://localhost:8085/updateStatus/`, {
+      const res = await fetch(`http://52.43.62.125:8085/updateStatus/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(effort)

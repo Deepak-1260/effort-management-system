@@ -430,7 +430,7 @@ const downloadSampleExcel = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:8081/allocate', {
+      const response = await fetch('http://52.43.62.125:8081/allocate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -472,7 +472,7 @@ const downloadSampleExcel = () => {
       console.log("Bulk upload payload:", payload); // For debugging
 
       try {
-        const res = await fetch('http://localhost:8081/bulkAllocateTrainers', { // New endpoint for bulk allocation
+        const res = await fetch('http://52.43.62.125:8081/bulkAllocateTrainers', { // New endpoint for bulk allocation
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)

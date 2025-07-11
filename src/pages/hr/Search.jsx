@@ -237,7 +237,7 @@ const Search = () => {
         }
       });
  
-      const response = await fetch(`http://localhost:8081/search?${params.toString()}`);
+      const response = await fetch(`http://52.43.62.125:8081/search?${params.toString()}`);
       if (!response.ok) throw new Error('Failed to fetch trainers');
  
       const data = await response.json();

@@ -165,7 +165,7 @@ const DeleteTrainer = () => {
 
     if (id.trim()) {
       try {
-        const res = await fetch(`http://localhost:8085/searchTrainer/${id}`)
+        const res = await fetch(`http://52.43.62.125:8085/searchTrainer/${id}`)
         if (res.ok) {
           const data = await res.json();
           console.log(data)
@@ -187,7 +187,7 @@ const DeleteTrainer = () => {
     if (!tmId.trim()) return alert('Trainer ID is required');
 
     try {
-      const response = await fetch(`http://localhost:8081/deleteTrainer/${tmId}`, {
+      const response = await fetch(`http://52.43.62.125:8081/deleteTrainer/${tmId}`, {
         method: 'DELETE'
       });
 
